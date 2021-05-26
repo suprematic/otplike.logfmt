@@ -166,6 +166,14 @@ fn main() -> io::Result<()> {
                 Ok(serde_json::Value::Object(line)) => {
                     process_line(line);
                 }
+
+                Err(e) => {
+                    println!(
+                        "{}",
+                        Colour::Red.paint(format!("cannot parse log line: {}\n{}", e, line))
+                    );
+                }
+
                 _ => {}
             }
         } else {
