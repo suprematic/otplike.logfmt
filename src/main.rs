@@ -14,12 +14,6 @@ trait Format {
     fn format<T: Formatter>(&self) -> String;
 }
 
-impl Format for str {
-    fn format<T: Formatter>(&self) -> String {
-        T::format(Some(self))
-    }
-}
-
 impl Format for Option<&str> {
     fn format<T: Formatter>(&self) -> String {
         T::format(*self)
@@ -99,7 +93,7 @@ impl Formatter for TextFormatter {
     }
 }
 
-fn process_line(mut line: Map<String, serde_json::Value>) {
+fn process_line(mut line: Map<String, Value>) {
     {
         let when = line
             .get("when")
@@ -141,7 +135,7 @@ fn process_line(mut line: Map<String, serde_json::Value>) {
     }
 
     if !line.is_empty() {
-        let highlighted = to_colored_json_auto(&serde_json::Value::Object(line));
+        let highlighted = to_colored_json_auto(&Value::Object(line));
         println!("{}\n", highlighted.unwrap());
     }
 }
@@ -157,7 +151,7 @@ fn main() -> io::Result<()> {
     let stdin = io::stdin();
 
     for line in stdin.lock().lines() {
-        let line = &line?;
+        let ref line = line?;
 
         if tty {
             let parsed = serde_json::from_str(line);
